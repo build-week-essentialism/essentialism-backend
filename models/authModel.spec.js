@@ -10,11 +10,15 @@ const testUser = {
   lastName: 'Eilish'
 };
 
-describe('authModel', () => {
-  afterEach(async () => {
-    await db('users').truncate();
-  });
+beforeEach(async () => {
+  await db('users').truncate();
+});
 
+afterEach(async () => {
+  await db('users').truncate();
+});
+
+describe('authModel', () => {
   describe('getUser()', () => {
     test('should return falsy if username does not exist', async () => {
       const user = await Auth.getUser({
@@ -33,7 +37,7 @@ describe('authModel', () => {
   describe('registerUser()', () => {
     test('should add user and return user', async () => {
       const user = await Auth.registerUser(testUser);
-      // Since neither the hashed password nor the timestamp can be calculated, exprect(user)toEqual(testUser); will not work.
+      // Since neither the hashed password nor the timestamp can be calculated, expect(user)toEqual(testUser); will not work.
       expect(user.id).toBe(1);
       expect(user.username).toBe('billie');
       expect(user.email).toBe('billieeilish@gmail.com');
@@ -81,7 +85,7 @@ describe('authModel', () => {
       expect(deletedUser).toBe(1);
     });
 
-    test('should return 0 if the submitted id did not exist', async () => {
+    test('should return 0 if the submitted user id did not exist', async () => {
       const user = await Auth.registerUser(testUser);
       expect(user).toBeTruthy();
       const deletedUser = await Auth.deleteUser(200);
