@@ -33,6 +33,7 @@ describe('authModel', () => {
   describe('registerUser()', () => {
     test('should add user and return user', async () => {
       const user = await Auth.registerUser(testUser);
+      // Since neither the hashed password nor the timestamp can be calculated, exprect(user)toEqual(testUser); will not work.
       expect(user.id).toBe(1);
       expect(user.username).toBe('billie');
       expect(user.email).toBe('billieeilish@gmail.com');
