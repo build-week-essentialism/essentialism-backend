@@ -13,10 +13,39 @@ const registerUser = async user => {
     ...user,
     password
   });
-  return getUser({ username: user.username });
+  return await db('users')
+    .where({ username: user.username })
+    .first();
+};
+
+const updateUser = async (id, updates) => {
+  if (updates.password) {
+    const password = bcrypt.hashSync(updates.password, 8);
+    await db('users')
+      .where({ id })
+      .update({ ...updates, password });
+    return await db('users')
+      .where({ id })
+      .first();
+  } else {
+    await db('users')
+      .where({ id })
+      .update(updates);
+    return await db('users')
+      .where({ id })
+      .first();
+  }
+};
+
+const deleteUser = async id => {
+  await db('users')
+    .where(id)
+    .delete();
 };
 
 module.exports = {
   getUser,
-  registerUser
+  registerUser,
+  updateUser,
+  deleteUser
 };
