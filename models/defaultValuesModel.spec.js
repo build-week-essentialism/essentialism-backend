@@ -1,12 +1,16 @@
 const DefaultValues = require('./defaultValuesModel');
 
-describe('authModel', () => {
-  describe('get()', () => {
-    test.only('should return array of value objects', async () => {
-      const defaultValues = await DefaultValues.get();
-      expect(Array.isArray(defaultValues)).toBeTrue();
-      // I didn't test for an exact number in case we change it:
-      expect(defaultValues.length).toBeGreaterThan(10);
+describe('defaultValuesModel', () => {
+  describe('getDefaultValues()', () => {
+    test('should return an array of value objects with a length of at least 10', async () => {
+      const defaultValues = await DefaultValues.getDefaultValues();
+      expect(Array.isArray(defaultValues)).toBe(true);
+      expect(defaultValues[0]).toEqual({
+        id: 1,
+        default_value_name: 'Athletic ability'
+      });
+      // I don't test for an exact number in case more default values are added:
+      expect(defaultValues.length).toBeGreaterThan(9);
     });
   });
 });
