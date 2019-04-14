@@ -72,4 +72,13 @@ describe('authModel', () => {
       expect(updatedUser.lastName).toBe('Eilish');
     });
   });
+
+  describe('deleteUser()', () => {
+    test('should return falsy after user is deleted', async () => {
+      const user = await Auth.registerUser(testUser);
+      expect(user).toBeTruthy();
+      const deletedUser = await Auth.deleteUser(user.id);
+      expect(deletedUser).toBeFalsy();
+    });
+  });
 });
