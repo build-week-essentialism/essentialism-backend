@@ -9,10 +9,11 @@ const getUser = async username => {
 
 const registerUser = async user => {
   const password = bcrypt.hashSync(user.password, 8);
-  return db('users').insert({
+  await db('users').insert({
     ...user,
     password
   });
+  return getUser({ username: user.username });
 };
 
 module.exports = {
