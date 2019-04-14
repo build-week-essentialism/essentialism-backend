@@ -7,10 +7,7 @@ exports.up = function(knex) {
       .unique();
     table.string('password', 64).notNullable();
     table.timestamp('created_at').defaultTo(knex.fn.now());
-    table
-      .string('email', 32)
-      .notNullable()
-      .unique();
+    table.string('email', 32);
     table.string('firstName', 64);
     table.string('lastName', 64);
   });
