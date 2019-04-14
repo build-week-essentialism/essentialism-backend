@@ -44,7 +44,6 @@ describe('authModel', () => {
   describe('updateUser()', () => {
     test('should update user and return user (without new password)', async () => {
       const user = await Auth.registerUser(testUser);
-      console.log('AAAAAAAAAAAA', user);
       const updatedUser = await Auth.updateUser(1, {
         username: 'willie',
         firstName: 'Willie'
@@ -74,11 +73,18 @@ describe('authModel', () => {
   });
 
   describe('deleteUser()', () => {
-    test('should return falsy after user is deleted', async () => {
+    test('should return 1 after user is deleted', async () => {
       const user = await Auth.registerUser(testUser);
       expect(user).toBeTruthy();
       const deletedUser = await Auth.deleteUser(user.id);
-      expect(deletedUser).toBeFalsy();
+      expect(deletedUser).toBe(1);
+    });
+
+    test('should return 0 if the submitted id did not exist', async () => {
+      const user = await Auth.registerUser(testUser);
+      expect(user).toBeTruthy();
+      const deletedUser = await Auth.deleteUser(200);
+      expect(deletedUser).toBe(0);
     });
   });
 });
