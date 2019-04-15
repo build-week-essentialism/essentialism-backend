@@ -57,7 +57,20 @@ router.put('/:id', (req, res) => {
 })
 
 router.delete('/:id', (req, res) => {
-
+  const { id } = req.params
+  createdValues.deleteCreatedValue(id)
+    .then(data => {
+      console.log(data)
+      if (!data) {
+        res.status(404).json({ message: `There's no user with the id of ${id}`})
+      } else {
+        // Returns number of records deleted (1)
+        res.status(200).json(data)
+      }
+    })
+    .catch(() => {
+      res.status(500).json(error500)
+    })
 })
 
 module.exports = router;
