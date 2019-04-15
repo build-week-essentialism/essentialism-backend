@@ -1,5 +1,5 @@
 const express = require('express');
-const models = require('../models/userValuesModel')
+const userValues = require('../models/userValuesModel')
 
 const router = express.Router();
 router.use(express.json());
