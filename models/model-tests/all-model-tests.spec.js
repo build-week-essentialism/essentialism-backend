@@ -6,6 +6,14 @@ const DefaultValues = require('../defaultValuesModel');
 const Projects = require('../projectsModel');
 const UserValues = require('../userValuesModel');
 
+const testUser = {
+  username: 'billie',
+  password: '123',
+  email: 'billieeilish@gmail.com',
+  firstName: 'Billie',
+  lastName: 'Eilish'
+};
+
 const testInputValue = { user_id: 1, created_value_name: 'video games' };
 
 const testOutputValue = {
@@ -14,12 +22,12 @@ const testOutputValue = {
   created_value_name: 'video games'
 };
 
-const testUser = {
-  username: 'billie',
-  password: '123',
-  email: 'billieeilish@gmail.com',
-  firstName: 'Billie',
-  lastName: 'Eilish'
+const testInputProject = { user_id: 1, project_name: 'coding' };
+
+const testOutputProject = {
+  id: 1,
+  user_id: 1,
+  created_project_name: 'coding'
 };
 
 // authModel tests
@@ -139,7 +147,6 @@ describe('createdValuesModel', () => {
     });
 
     test('should return an array of value objects if user has created values', async () => {
-      // Why doesn't this add 3 values?
       await CreatedValues.addCreatedValue(testInputValue);
       await CreatedValues.addCreatedValue(testInputValue);
       await CreatedValues.addCreatedValue(testInputValue);
@@ -205,3 +212,79 @@ describe('defaultValuesModel', () => {
 });
 
 // projectsModel tests
+
+describe('ProjectsModel', () => {
+  beforeAll(async () => {
+    // Add a user in order to test ProjectsModel
+    await Auth.registerUser({
+      username: 'billie',
+      password: '123',
+      email: 'billieeilish@gmail.com',
+      firstName: 'Billie',
+      lastName: 'Eilish'
+    });
+  });
+
+  afterAll(async () => {
+    // Remove user after testing ProjectsModel
+    await db('users').truncate();
+  });
+
+  afterEach(async () => {
+    await db('projects').truncate();
+  });
+
+  describe('getProjects()', () => {
+    test('should return an empty array if user has not created projects', async () => {
+      const projects = await Projects.getProjects(1);
+      expect(Array.isArray(projects)).toBe(true);
+      expect(projects).toHaveLength(0);
+    });
+
+    test('should return an array of project objects if user has created projects', async () => {
+      await Projects.addProject(testInputProject);
+      await Projects.addProject(testInputProject);
+      await Projects.addProject(testInputProject);
+      const projects = await Projects.getProjects(1);
+      expect(Array.isArray(projects)).toBe(true);
+      expect(projects).toHaveLength(3);
+      expect(projects[0]).toEqual(testOutputProject);
+    });
+  });
+
+  describe('addProject()', () => {
+    test('should add project and return project', async () => {
+      const Project = await Projects.addProject(testInputProject);
+      expect(Project).toEqual(testOutputProject);
+    });
+  });
+
+  describe('updateProject()', () => {
+    test('should update project and return updated project', async () => {
+      const Project = await Projects.addProject(testInputProject);
+      expect(Project).toEqual(testOutputProject);
+      const updatedProject = await Projects.updateProject(1, {
+        created_project_name: 'jogging'
+      });
+      expect(updatedProject).toEqual({
+        id: 1,
+        user_id: 1,
+        created_project_name: 'jogging'
+      });
+    });
+  });
+
+  describe('deleteProject()', () => {
+    test('should return 1 after project is deleted', async () => {
+      await Projects.addProject(testInputProject);
+      const deletedProject = await Projects.deleteProject(1);
+      expect(deletedProject).toBe(1);
+    });
+
+    test('should return 0 if the project id did not exist', async () => {
+      await Projects.addProject(testInputProject);
+      const deletedProject = await Projects.deleteProject(200);
+      expect(deletedProject).toBe(0);
+    });
+  });
+});
