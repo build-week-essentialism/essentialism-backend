@@ -68,18 +68,11 @@ router.post('/register', (req, res) => {
 })
 
 // DELETE USER VIA ID IN PARAMS
-//
-// KEEPS TRIGGER .CATCH. UNSURE WHY. IT DOES DELETE THE USER FROM THE TABLE
 router.delete('/:id', async (req, res) => {
   const { id } = req.params
-  // Check if there's a user with a matching ID
   auth.deleteUser(id)
     .then(data => {
-      if (!data) {
-        res.status(404).json({message: "There's no user with that ID!"})
-      } else {
-        res.status(200).message({ message: `User with ID of ${id} successfully deleted`})
-      }
+      res.status(200).json({ message: `User with ID of ${id} successfully deleted`})
     })
     .catch(() => {
       res.status(500).json(error500)
