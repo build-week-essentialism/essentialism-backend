@@ -13,10 +13,16 @@ const error500 = {
   message: "Something went wrong when getting your request. Make sure the request is foolproof"
 }
 
+// created-values object
+// {
+//   "id": 1,
+//   "user_id": 1,  <-- REFERENCES ID IN USERS (FOREIGN KEY)
+//   "created_value_name": "emotional expression"
+// }
+
 // GET ALL CREATED VALUES LINKED TO A USER. ID REFERS TO USER ID!
 router.get('/:id', (req, res) => {
   const user_id = req.params
-  console.log(user_id)
   if (!user_id) {
     res.status(404).json(error404)
   } else {
@@ -31,7 +37,19 @@ router.get('/:id', (req, res) => {
 })
 
 router.post('/', (req, res) => {
-
+  const createdValue = req.body;
+  if (!createdValue || !createdValue.created_value_name || !createdValue.user_id) {
+    res.status(404).json({ message: "Please provide a 'created_value_name' and the 'user_id' of the corresponding user" })
+  } else {
+    createdValues.addCreatedValue(createdValue)
+      .then(data => {
+        // RETURNS NEWLY-CREATED CREATED VALUE OBJECT
+        res.status(200).json(data)
+      })
+      .catch(() => {
+        res.status(500).json(error500)
+      })
+  }
 })
 
 router.put('/:id', (req, res) => {
