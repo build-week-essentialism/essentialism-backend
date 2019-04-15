@@ -53,7 +53,6 @@ router.post('/login', (req, res) => {
   // -> IF PROPERTIES GET PASSED VIA BODY THAT DO NOT CORRESPOND TO THE USER TABLE IN THE DATABASE, RETURNS A 500 ERROR
 router.post('/register', (req, res) => {
   const user = req.body;
-  // CHECK IF BODY CONTAINS USERNAME && PASSWORD
   if (!user.username || !user.password) {
     res.status(404).json({ message: "Please give both a 'username' and a 'password' to register a new user!"})
   } else {
@@ -65,6 +64,11 @@ router.post('/register', (req, res) => {
         res.status(500).json(error500)
       })
   }
+})
+
+// UPDATE USER
+router.put('/:id', (req, res) => {
+
 })
 
 // DELETE USER VIA ID IN PARAMS
