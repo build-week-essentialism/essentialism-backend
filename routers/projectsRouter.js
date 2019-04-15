@@ -53,13 +53,57 @@ router.post('/', (req, res) => {
   }
 })
 
-router.put('/', (req, res) => {
-  
+// Update Project
+router.put('/:id', (req, res) => {
+  const { id } = req.params;
+  const update = req.body
+  if (!update.project_name && !update.user_id) {
+    res.status(404).json({ message: "Be sure to pass either 'project_name' or 'user_id' if you want to change 'em"})
+  } else {
+    projects.updateProject(id, update)
+      .then(data => {
+        if (!data) {
+          res.status(404).json({ message: `No existing project with the id of ${id}`})
+        } else {
+          // Returns updated createdValue object
+          res.status(200).json(data)
+        }
+      })
+      .catch(() => res.status(500).json(error500) )
+  }
 })
 
-router.delete('/', (req, res) => {
-  
-})
+// SET PROJECT TO INACTIVE
+router.put('/:id/inactive', (req, res) => {
+  const { id } = req.params;
+  projects.updateProject(id, {"project_active": false})
+    .then(data => {
+      if (!data) {
+        res.status(404).json({ message: `No existing project with the id of ${id}`})
+      } else {
+        // Returns updated createdValue object
+        res.status(200).json(data)
+      }
+    })
+    .catch(() => { res.status(500).json(error500) })
+  }
+)
+
+// SET PROJECT TO ACTIVE
+router.put('/:id/active', (req, res) => {
+  const { id } = req.params;
+  projects.updateProject(id, {"project_active": true})
+    .then(data => {
+      if (!data) {
+        res.status(404).json({ message: `No existing project with the id of ${id}`})
+      } else {
+        // Returns updated createdValue object
+        res.status(200).json(data)
+      }
+    })
+    .catch(() => res.status(500).json(error500))
+  }
+)
 
 router.delete('/:id', (req, res) => {
   const { id } = req.params
@@ -72,9 +116,7 @@ router.delete('/:id', (req, res) => {
         res.status(200).json(data)
       }
     })
-    .catch(() => {
-      res.status(500).json(error500)
-    })
+    .catch(() => res.status(500).json(error500))
 })
 
 module.exports = router;
