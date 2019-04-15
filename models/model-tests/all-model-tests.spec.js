@@ -26,8 +26,9 @@ const testInputProject = { user_id: 1, project_name: 'coding' };
 
 const testOutputProject = {
   id: 1,
+  project_active: 1,
   user_id: 1,
-  created_project_name: 'coding'
+  project_name: 'coding'
 };
 
 // authModel tests
@@ -264,12 +265,13 @@ describe('ProjectsModel', () => {
       const Project = await Projects.addProject(testInputProject);
       expect(Project).toEqual(testOutputProject);
       const updatedProject = await Projects.updateProject(1, {
-        created_project_name: 'jogging'
+        project_name: 'jogging'
       });
       expect(updatedProject).toEqual({
         id: 1,
+        project_active: 1,
         user_id: 1,
-        created_project_name: 'jogging'
+        project_name: 'jogging'
       });
     });
   });
