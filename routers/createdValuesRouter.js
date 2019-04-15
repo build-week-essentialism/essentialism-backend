@@ -63,6 +63,7 @@ router.put('/:id', (req, res) => {
         if (!data) {
           res.status(404).json({ message: `No existing value with the id of ${id}`})
         } else {
+          // Returns updated createdValue object
           res.status(200).json(data)
         }
       })
@@ -76,7 +77,6 @@ router.delete('/:id', (req, res) => {
   const { id } = req.params
   createdValues.deleteCreatedValue(id)
     .then(data => {
-      console.log(data)
       if (!data) {
         res.status(404).json({ message: `There's no user with the id of ${id}`})
       } else {
