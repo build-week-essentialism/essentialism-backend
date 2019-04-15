@@ -39,6 +39,16 @@ router.get('/', (req, res) => {
     })
 })
 
+// LOGIN???
+router.post('/login', (req, res) => {
+  const { username, password } = req.body;
+  // get user w/ username
+  // Check user-pass to hashed provided pass
+  // if they match, return data
+  // else 404
+})
+
+
 // REGISTERS A NEW USER. RETURNS NEWLY-MADE USER OBJECT
   // -> IF PROPERTIES GET PASSED VIA BODY THAT DO NOT CORRESPOND TO THE USER TABLE IN THE DATABASE, RETURNS A 500 ERROR
 router.post('/register', (req, res) => {
@@ -55,6 +65,18 @@ router.post('/register', (req, res) => {
         res.status(500).json(error500)
       })
   }
+})
+
+// DELETE USER VIA ID IN PARAMS
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params
+  auth.deleteUser(id)
+    .then(data => {
+      res.status(200).json({ message: `User with ID of ${id} successfully deleted`})
+    })
+    .catch(() => {
+      res.status(500).json(error500)
+    })
 })
 
 module.exports = router;
