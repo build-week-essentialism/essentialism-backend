@@ -1,5 +1,6 @@
-const db = require('../utilities/dbConfig');
 const bcrypt = require('bcryptjs');
+
+const db = require('../utilities/dbConfig');
 
 const getUser = async username => {
   return await db('users')
