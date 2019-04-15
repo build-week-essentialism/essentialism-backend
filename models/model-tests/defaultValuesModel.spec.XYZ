@@ -1,4 +1,4 @@
-const DefaultValues = require('./defaultValuesModel');
+const DefaultValues = require('../defaultValuesModel');
 
 describe('defaultValuesModel', () => {
   describe('getDefaultValues()', () => {

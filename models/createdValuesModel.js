@@ -2,18 +2,19 @@ const db = require('../utilities/dbConfig');
 
 // The id parameter is the user id:
 const getCreatedValues = async id => {
-  return await db('created-values').where({ id });
+  return await db('created-values').where({ user_id: id });
 };
 
 const addCreatedValue = async createdValue => {
   await db('created-values').insert(createdValue);
-  return await db('created-values')
-    .where({ user_id: createdValue.user_id })
-    .first();
-  // ALERT - THIS DOES NOT ACTUALLY WORK CORRECTLY!! Since the user can enter multiple values with the same name, this will return the first one, not the latest one. It may not matter.
+  const valuesArray = await db('created-values').where({
+    user_id: createdValue.user_id,
+    created_value_name: createdValue.created_value_name
+  });
+  return valuesArray[valuesArray.length - 1];
 };
 
-// The id parameter is the user id:
+// The id parameter is the created value id (not the user id):
 const updateCreatedValue = async (id, update) => {
   await db('created-values')
     .where({ id })

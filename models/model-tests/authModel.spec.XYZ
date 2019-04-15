@@ -1,6 +1,6 @@
-const db = require('../utilities/dbConfig');
+const db = require('../../utilities/dbConfig');
 
-const Auth = require('./authModel');
+const Auth = require('../authModel');
 
 const testUser = {
   username: 'billie',

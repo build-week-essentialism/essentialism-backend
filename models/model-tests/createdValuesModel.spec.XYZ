@@ -1,7 +1,7 @@
-const db = require('../utilities/dbConfig');
+const db = require('../../utilities/dbConfig');
 
-const AuthModel = require('./authModel');
-const CreatedValues = require('./createdValuesModel');
+const Auth = require('../authModel');
+const CreatedValues = require('../createdValuesModel');
 
 const testInputValue = { user_id: 1, created_value_name: 'video games' };
 const testOutputValue = {
@@ -12,7 +12,7 @@ const testOutputValue = {
 
 beforeAll(async () => {
   // Add a user in order to test createdValuesModel
-  await AuthModel.registerUser({
+  await Auth.registerUser({
     username: 'billie',
     password: '123',
     email: 'billieeilish@gmail.com',
@@ -30,7 +30,7 @@ afterEach(async () => {
   await db('created-values').truncate();
 });
 
-describe.only('createdValuesModel', () => {
+describe('createdValuesModel', () => {
   describe('getCreatedValues()', () => {
     test('should return an empty array if user has not created values', async () => {
       const createdValues = await CreatedValues.getCreatedValues(1);
