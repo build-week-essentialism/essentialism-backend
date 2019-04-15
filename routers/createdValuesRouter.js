@@ -53,7 +53,23 @@ router.post('/', (req, res) => {
 })
 
 router.put('/:id', (req, res) => {
-
+  const { id } = req.params;
+  const update = req.body
+  if (!update.created_value_name && !update.user_id) {
+    res.status(404).json({ message: "Be sure to pass either 'created_value_name' or 'user_id' if you want to change 'em"})
+  } else {
+    createdValues.updateCreatedValue(id, update)
+      .then(data => {
+        if (!data) {
+          res.status(404).json({ message: `No existing value with the id of ${id}`})
+        } else {
+          res.status(200).json(data)
+        }
+      })
+      .catch(() => {
+        res.status(500).json(error500)
+      })
+  }
 })
 
 router.delete('/:id', (req, res) => {
