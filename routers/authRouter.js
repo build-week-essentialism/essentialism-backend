@@ -56,6 +56,7 @@ router.post('/register', (req, res) => {
   if (!user.username || !user.password) {
     res.status(404).json({ message: "Please give both a 'username' and a 'password' to register a new user!"})
   } else {
+    // !!! Check for username first
     auth.registerUser(user)
       .then(data => {
         res.status(201).json(data)
@@ -72,11 +73,15 @@ router.put('/:id', (req, res) => {
 })
 
 // DELETE USER VIA ID IN PARAMS
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', (req, res) => {
   const { id } = req.params
   auth.deleteUser(id)
     .then(data => {
-      res.status(200).json({ message: `User with ID of ${id} successfully deleted`})
+      if (!data) {
+        res.status(404).json(error404)
+      } else {
+        res.status(200).json({ message: `User with ID of ${id} successfully deleted`})
+      }
     })
     .catch(() => {
       res.status(500).json(error500)
