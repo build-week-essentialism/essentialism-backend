@@ -31,6 +31,17 @@ const testOutputProject = {
   project_name: 'coding'
 };
 
+const testInputUserValues = [
+  {
+    user_id: 1,
+    default_value_id: 1
+  },
+  {
+    user_id: 1,
+    created_value_id: 1
+  }
+];
+
 // authModel tests
 
 describe('authModel', () => {
@@ -287,6 +298,119 @@ describe('ProjectsModel', () => {
       await Projects.addProject(testInputProject);
       const deletedProject = await Projects.deleteProject(200);
       expect(deletedProject).toBe(0);
+    });
+  });
+});
+
+// userValuesModel tests
+
+describe('userValuesModel', () => {
+  beforeAll(async () => {
+    await Auth.registerUser({
+      username: 'billie',
+      password: '123',
+      email: 'billieeilish@gmail.com',
+      firstName: 'Billie',
+      lastName: 'Eilish'
+    });
+    await CreatedValues.addCreatedValue(testInputValue);
+    await CreatedValues.addCreatedValue(testInputValue);
+  });
+
+  afterAll(async () => {
+    await db('users').truncate();
+    await db('created-values').truncate();
+    await db('user-values').truncate();
+  });
+
+  beforeEach(async () => {
+    await db('user-values').truncate();
+  });
+
+  describe('getUserValues()', () => {
+    test('should return an empty array if user has not chosen any values', async () => {
+      const userValues = await UserValues.getUserValues(1);
+      expect(userValues).toEqual([]);
+    });
+
+    test('should return an array of value objects if user has chosen values', async () => {
+      await UserValues.addUserValue(testInputUserValues[0]);
+      await UserValues.addUserValue(testInputUserValues[1]);
+      const userValues = await UserValues.getUserValues(1);
+      expect(Array.isArray(userValues)).toBe(true);
+      expect(userValues).toEqual([
+        {
+          id: 1,
+          created_value_name: null,
+          default_value_name: 'Athletic ability',
+          value_rank: null,
+          value_importance: null
+        },
+        {
+          id: 2,
+          created_value_name: 'video games',
+          default_value_name: null,
+          value_rank: null,
+          value_importance: null
+        }
+      ]);
+    });
+  });
+
+  describe('addUserValue()', () => {
+    test('should add user value and return array of user values', async () => {
+      let userValues = await UserValues.getUserValues(1);
+      expect(userValues).toHaveLength(0);
+      userValues = await UserValues.addUserValue(testInputUserValues[0]);
+      expect(userValues).toHaveLength(1);
+    });
+  });
+
+  describe('updateUserValue()', () => {
+    test('should update user value and return array of user values', async () => {
+      const userValues = await UserValues.addUserValue(testInputUserValues[0]);
+      expect(userValues).toEqual([
+        {
+          id: 1,
+          created_value_name: null,
+          default_value_name: 'Athletic ability',
+          value_rank: null,
+          value_importance: null
+        }
+      ]);
+      const updatedUserValue = await UserValues.updateUserValue(1, 1, {
+        value_rank: 2,
+        value_importance: 'Exercising calms me down.'
+      });
+      expect(updatedUserValue).toEqual([
+        {
+          id: 1,
+          created_value_name: null,
+          default_value_name: 'Athletic ability',
+          value_rank: 2,
+          value_importance: 'Exercising calms me down.'
+        }
+      ]);
+    });
+  });
+
+  describe('deleteUserValue()', () => {
+    test('user values array should be one item shorter after deleting user value', async () => {
+      await UserValues.addUserValue(testInputUserValues[0]);
+      await UserValues.addUserValue(testInputUserValues[1]);
+      const userValues = await UserValues.getUserValues(1);
+      expect(userValues).toHaveLength(2);
+      const deletedUserValue = await UserValues.deleteUserValue(1, 2);
+      expect(deletedUserValue).toHaveLength(1);
+    });
+
+    test('should return same user values array if user value id did not exist', async () => {
+      await UserValues.addUserValue(testInputUserValues[0]);
+      await UserValues.addUserValue(testInputUserValues[1]);
+      const userValues = await UserValues.getUserValues(1);
+      expect(userValues).toHaveLength(2);
+      const deletedUserValue = await UserValues.deleteUserValue(1, 200);
+      expect(deletedUserValue).toHaveLength(2);
     });
   });
 });
