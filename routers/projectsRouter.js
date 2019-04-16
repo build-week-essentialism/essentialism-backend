@@ -1,6 +1,8 @@
 const express = require('express');
 const projects = require('../models/projectsModel')
 
+const restricted = require('../utilities/restricted-middleware');
+
 const router = express.Router();
 router.use(express.json());
 
@@ -22,6 +24,7 @@ const error500 = {
 // }
 
 // GET ALL PROJECTS LINKED TO A USER. ID REFERS TO USER_ID, WHICH IS LINKED TO ID IN USERS
+// router.get('/:id', restricted,(req, res) => {
 router.get('/:id', (req, res) => {
   const user_id = req.params
   if (!user_id) {
@@ -37,6 +40,7 @@ router.get('/:id', (req, res) => {
   }
 })
 
+// router.post('/', restricted,(req, res) => {
 router.post('/', (req, res) => {
   const project = req.body
   if (!project.user_id || !project.project_name) {
@@ -54,6 +58,7 @@ router.post('/', (req, res) => {
 })
 
 // Update Project
+// router.put('/:id', restricted,(req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const update = req.body
@@ -74,6 +79,7 @@ router.put('/:id', (req, res) => {
 })
 
 // SET PROJECT TO INACTIVE
+// router.put('/:id/inactive', restricted,(req, res) => {
 router.put('/:id/inactive', (req, res) => {
   const { id } = req.params;
   projects.updateProject(id, {"project_active": false})
@@ -90,6 +96,7 @@ router.put('/:id/inactive', (req, res) => {
 )
 
 // SET PROJECT TO ACTIVE
+// router.put('/:id/active', restricted, (req, res) => {
 router.put('/:id/active', (req, res) => {
   const { id } = req.params;
   projects.updateProject(id, {"project_active": true})
@@ -105,6 +112,7 @@ router.put('/:id/active', (req, res) => {
   }
 )
 
+// router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params
   projects.deleteProject(id)
