@@ -42,7 +42,44 @@ router.get('/:user_id', (req, res) => {
 
 // ADD USER-VALUE ENTRY
 router.post('/', (req, res) => {
+  const { user_id, default_value_id, created_value_id } = req.body
+  
 
+  // ADD USER-VALUE WITH CREATED_VALUE_ID
+  if (user_id && default_value_id && !created_value_id) {
+    userValues.addUserValue({ user_id, default_value_id})
+      .then(values => {
+        if (values.length < 1) {
+          res.status(404).json({ message: `There's no user with user_id of ${user_id}`})
+        } else {
+          res.status(200).json(values)
+        }
+      })
+      .catch(() => {
+        res.status(500)
+      })
+  }
+
+  // ADD USER-VALUE WITH CREATED_VALUE_ID
+  else if (user_id && !default_value_id && created_value_id) {
+    userValues.addUserValue({ user_id, created_value_id})
+      .then(values => {
+        if (values.length < 1) {
+          res.status(404).json({ message: `There's no user with user_id of ${user_id}`})
+        } else {
+          res.status(200).json(values)
+        }
+      })
+      .catch(() => {
+        res.status(500)
+      })
+  }
+
+  // IF USER_ID IS MISSING, CREATED_ID *AND* DEFAULT_ID ARE PASSED *OR* BOTH ARE MISSING.
+  // CATCH-ALL 404
+  else {
+    res.status(404).json({ message: "Make sure you body has a 'user_id' as well as *either* a 'default_value_id' or 'created_value_id"})
+  }
 })
 
 // EDIT PREVIOUSLY-MADE USER-VALUE ENTRY.
@@ -141,7 +178,6 @@ router.delete('/:user_id', (req, res) => {
     .catch(() => {
       res.status(500).json(error500)
     })
-
 })
 
 module.exports = router;
