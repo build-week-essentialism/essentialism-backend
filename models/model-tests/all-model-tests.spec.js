@@ -170,20 +170,20 @@ describe('createdValuesModel', () => {
   });
 
   describe('addCreatedValue()', () => {
-    test('should add created value and return created value', async () => {
-      const createdValue = await CreatedValues.addCreatedValue(testInputValue);
-      expect(createdValue).toEqual(testOutputValue);
+    test('should add created value and return created value array', async () => {
+      const createdValues = await CreatedValues.addCreatedValue(testInputValue);
+      expect(createdValues[0]).toEqual(testOutputValue);
     });
   });
 
   describe('updateCreatedValue()', () => {
-    test('should update created value and return updated created value', async () => {
-      const createdValue = await CreatedValues.addCreatedValue(testInputValue);
-      expect(createdValue).toEqual(testOutputValue);
-      const updatedValue = await CreatedValues.updateCreatedValue(1, {
+    test('should update created value and return created value array', async () => {
+      let createdValues = await CreatedValues.addCreatedValue(testInputValue);
+      expect(createdValues[0]).toEqual(testOutputValue);
+      createdValues = await CreatedValues.updateCreatedValue(1, 1, {
         created_value_name: 'board games'
       });
-      expect(updatedValue).toEqual({
+      expect(createdValues[0]).toEqual({
         id: 1,
         user_id: 1,
         created_value_name: 'board games'
@@ -192,16 +192,18 @@ describe('createdValuesModel', () => {
   });
 
   describe('deleteCreatedValue()', () => {
-    test('should return 1 after created value is deleted', async () => {
-      await CreatedValues.addCreatedValue(testInputValue);
-      const deletedValue = await CreatedValues.deleteCreatedValue(1);
-      expect(deletedValue).toBe(1);
+    test('returned created values array length should be 1 fewer', async () => {
+      let createdValues = await CreatedValues.addCreatedValue(testInputValue);
+      expect(createdValues).toHaveLength(1);
+      createdValues = await CreatedValues.deleteCreatedValue(1, 1);
+      expect(createdValues).toHaveLength(0);
     });
 
-    test('should return 0 if the submitted created value id did not exist', async () => {
-      await CreatedValues.addCreatedValue(testInputValue);
-      const deletedValue = await CreatedValues.deleteCreatedValue(200);
-      expect(deletedValue).toBe(0);
+    test('returned created values array length should be the same if submitted project id does not exist', async () => {
+      let createdValues = await CreatedValues.addCreatedValue(testInputValue);
+      expect(createdValues).toHaveLength(1);
+      createdValues = await CreatedValues.deleteCreatedValue(1, 200);
+      expect(createdValues).toHaveLength(1);
     });
   });
 });
