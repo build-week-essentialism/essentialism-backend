@@ -1,6 +1,9 @@
 const express = require('express');
 const auth = require('../models/authModel')
 
+const bcrypt = require('bcryptjs');
+const tokenService = require('../utilities/generate-token');
+
 const router = express.Router();
 router.use(express.json());
 
@@ -16,7 +19,7 @@ const error500 = {
 // USER OBJECT IS AS FOLLOWS:
 // {
 //   "id": 1,
-//   "name": "billie",
+//   "username": "billie",
 //   "password": "$2a$00$xxxxxxxxxxxx......",
 //   "created_at": "2019-04-14 16:09:59",
 //   (OPTIONAL) "email": "billieeilish@gmail.com",
@@ -24,7 +27,64 @@ const error500 = {
 //   (OPTIONAL) "lastName": "Eilish"
 // }
 
-// GET USER BY USERNAME. TAKES USERNAME FROM REQUEST BODY
+
+// LOGIN
+// TAKES IN USERNAME AND PASSWORD FROM REQ.BODY
+// IF SUCCESSFUL, RETURNS AN OBJECT WITH A MESSAGE, TOKEN, AND USER OBJECT
+router.post('/login', (req, res) => {
+  const username = {"username": req.body.username};
+  const { password } = req.body
+  if(!username || !password) {
+    res.status(404).json({ message: "Please pass me a 'username' and a 'password'!"})
+  } else {
+    auth.getUser(username)
+      .then(user => {
+        // SUCCESS CASE: CORRECT USERNAME & PASSWORD.
+        if (user && bcrypt.compareSync(password, user.password)) {
+          const token = tokenService(user);
+          // RETURNS A MESSAGE, A TOKEN, AND THE USER OBJECT
+          res.status(200).json({
+            message: `Welcome ${user.username}!`,
+            token,
+            user
+          });
+        } 
+        // FAIL: INCORRECT PASSWORD
+        if (user && !bcrypt.compareSync(password, user.password)) {
+          res.status(404).json({ message: "Invalid password!"})
+        } 
+        // FAIL: INCORRECT USERNAME (DEFAULT)
+        else {
+          res.status(404).json({ message: `There's no user with a username of ${req.body.username}`})
+        }
+      })
+      .catch(() => {
+        res.status(500).json(error500)
+      })
+    }
+})
+
+
+// REGISTERS A NEW USER. RETURNS NEWLY-MADE USER OBJECT
+// -> IF PROPERTIES GET PASSED VIA BODY THAT DO NOT CORRESPOND TO THE USER TABLE IN THE DATABASE, RETURNS A 500 ERROR
+router.post('/register', (req, res) => {
+  const user = req.body;
+  if (!user.username || !user.password) {
+    res.status(404).json({ message: "Please give both a 'username' and a 'password' to register a new user!"})
+  } else {
+    // !!! Check for username first
+    auth.registerUser(user)
+    .then(data => {
+      res.status(201).json(data)
+    })
+    .catch(() => {
+      res.status(500).json(error500)
+      })
+    }
+})
+
+// GET USER BY USERNAME. UTILITY FUNCTION. NOT FOR GENERAL USE!
+// FOR THE SAKE OF NEAR CRUD-COMPLETE FUNCTIONALITY
 router.get('/', (req, res) => {
   auth.getUser(req.body)
     .then(data => {
@@ -39,34 +99,6 @@ router.get('/', (req, res) => {
     })
 })
 
-// LOGIN???
-router.post('/login', (req, res) => {
-  const { username, password } = req.body;
-  // get user w/ username
-  // Check user-pass to hashed provided pass
-  // if they match, return data
-  // else 404
-})
-
-
-// REGISTERS A NEW USER. RETURNS NEWLY-MADE USER OBJECT
-  // -> IF PROPERTIES GET PASSED VIA BODY THAT DO NOT CORRESPOND TO THE USER TABLE IN THE DATABASE, RETURNS A 500 ERROR
-router.post('/register', (req, res) => {
-  const user = req.body;
-  if (!user.username || !user.password) {
-    res.status(404).json({ message: "Please give both a 'username' and a 'password' to register a new user!"})
-  } else {
-    // !!! Check for username first
-    auth.registerUser(user)
-      .then(data => {
-        res.status(201).json(data)
-      })
-      .catch(() => {
-        res.status(500).json(error500)
-      })
-  }
-})
-
 // UPDATE USER
 router.put('/:id', (req, res) => {
 
@@ -76,8 +108,8 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params
   auth.deleteUser(id)
-    .then(data => {
-      if (!data) {
+  .then(data => {
+    if (!data) {
         res.status(404).json(error404)
       } else {
         res.status(200).json({ message: `User with ID of ${id} successfully deleted`})
@@ -86,6 +118,6 @@ router.delete('/:id', (req, res) => {
     .catch(() => {
       res.status(500).json(error500)
     })
-})
-
-module.exports = router;
+  })
+  
+  module.exports = router;
