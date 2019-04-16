@@ -13,7 +13,32 @@ const error500 = {
     'Something went wrong when getting your request. Make sure the request is foolproof'
 };
 
-router.get('/', (req, res) => {});
+
+// GET USER-VALUES. ID REFERS TO USER_ID IN USER
+// Returns an array of user-values objects with:
+// {
+//   "id": 1,
+//   Either "created_value_name" ***OR*** "default_value_name" will be NULL.
+//   "created_value_name": null || "Emotional Expression",
+//   "default_value_name": null || "Athletic Ability",
+//   "value_rank": 2,
+//   "value_importance": "I love sports"
+// }
+router.get('/:user_id', (req, res) => {
+  const {user_id} = req.params
+  userValues.getUserValues(user_id)
+    .then(values => {
+      if (!values) {
+        res.status(404).json({ message: `User with the id of ${user_id} either doesn't exist or has no values attached to his account`})
+      } else {
+        // RETURNS ARRAY OF USER-VALUE OBJECTS
+        res.status(200).json(values)
+      }
+    })
+    .catch(() => {
+      res.status(500).json(error500)
+    })
+});
 
 module.exports = router;
 
