@@ -40,13 +40,8 @@ const updateUser = async (id, updates) => {
 
 const deleteUser = async id => {
   return await db('users')
-<<<<<<< HEAD
-    .where({id})
-    .delete()
-=======
     .where({ id })
     .del();
->>>>>>> c210260546c548b78977222164ba9ffd9de43bb8
 };
 
 
