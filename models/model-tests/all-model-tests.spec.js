@@ -31,7 +31,6 @@ const testOutputProject = {
   user_id: 1,
   project_name: 'coding'
 };
-
 const testInputUserValues = [
   {
     user_id: 1,
@@ -266,41 +265,47 @@ describe('ProjectsModel', () => {
   });
 
   describe('addProject()', () => {
-    test('should add project and return project', async () => {
-      const Project = await Projects.addProject(testInputProject);
-      expect(Project).toEqual(testOutputProject);
+    test('should add project and return project array', async () => {
+      const projects = await Projects.addProject(testInputProject);
+      expect(Array.isArray(projects)).toBe(true);
+      expect(projects).toHaveLength(1);
+      expect(projects[0]).toEqual(testOutputProject);
     });
   });
 
   describe('updateProject()', () => {
-    test('should update project and return updated project', async () => {
-      const Project = await Projects.addProject(testInputProject);
-      expect(Project).toEqual(testOutputProject);
-      const updatedProject = await Projects.updateProject(1, {
+    test('should update project and return projects array', async () => {
+      let projects = await Projects.addProject(testInputProject);
+      expect(projects[0]).toEqual(testOutputProject);
+      projects = await Projects.updateProject(1, 1, {
         project_name: 'jogging',
         proj_val_align: 5
       });
-      expect(updatedProject).toEqual({
-        id: 1,
-        proj_val_align: 5,
-        project_active: 1,
-        user_id: 1,
-        project_name: 'jogging'
-      });
+      expect(projects).toEqual([
+        {
+          id: 1,
+          proj_val_align: 5,
+          project_active: 1,
+          user_id: 1,
+          project_name: 'jogging'
+        }
+      ]);
     });
   });
 
   describe('deleteProject()', () => {
-    test('should return 1 after project is deleted', async () => {
-      await Projects.addProject(testInputProject);
-      const deletedProject = await Projects.deleteProject(1);
-      expect(deletedProject).toBe(1);
+    test('returned projects array length should be 1 fewer', async () => {
+      let projects = await Projects.addProject(testInputProject);
+      expect(projects).toHaveLength(1);
+      projects = await Projects.deleteProject(1, 1);
+      expect(projects).toHaveLength(0);
     });
 
-    test('should return 0 if the project id did not exist', async () => {
-      await Projects.addProject(testInputProject);
-      const deletedProject = await Projects.deleteProject(200);
-      expect(deletedProject).toBe(0);
+    test('returned projects array length should be the same if submitted project id does not exist', async () => {
+      let projects = await Projects.addProject(testInputProject);
+      expect(projects).toHaveLength(1);
+      projects = await Projects.deleteProject(1, 200);
+      expect(projects).toHaveLength(1);
     });
   });
 });

@@ -1,34 +1,30 @@
 const db = require('../utilities/dbConfig');
 
-// The id parameter is the user id (the user primary key)
-const getProjects = async id => {
-  return await db('projects').where({ user_id: id });
+// The user_id parameter is the user id (the user primary key)
+const getProjects = async user_id => {
+  return await db('projects').where({ user_id });
 };
 
 const addProject = async project => {
   await db('projects').insert(project);
-  const projectsArray = await db('projects').where({
-    user_id: project.user_id,
-    project_name: project.project_name
-  });
-  return projectsArray[projectsArray.length - 1];
+  return getProjects(project.user_id);
 };
 
 // The id parameter is the project id (primary key)
-const updateProject = async (id, updates) => {
+// The user_id parameter is used to return the array of projects after the update
+const updateProject = async (user_id, id, updates) => {
   await db('projects')
     .where({ id })
     .update(updates);
-  return await db('projects')
-    .where({ id })
-    .first();
+  return getProjects(user_id);
 };
 
 // The id parameter is the project id (primary key)
-const deleteProject = async id => {
-  return await db('projects')
+const deleteProject = async (user_id, id) => {
+  await db('projects')
     .where({ id })
     .delete();
+  return getProjects(user_id);
 };
 
 module.exports = {
