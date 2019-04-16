@@ -1,6 +1,9 @@
 const express = require('express');
 const defaultValues = require('../models/defaultValuesModel');
 
+const restricted = require('../utilities/restricted-middleware');
+
+
 const router = express.Router();
 router.use(express.json());
 
@@ -14,6 +17,7 @@ const error500 = {
 };
 
 // GET ALL DEFAULT_VALUES
+// router.get('/', restricted,(req, res) => {
 router.get('/', (req, res) => {
   defaultValues.getDefaultValues()
     .then(data => {

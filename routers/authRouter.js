@@ -3,6 +3,7 @@ const auth = require('../models/authModel')
 
 const bcrypt = require('bcryptjs');
 const tokenService = require('../utilities/generate-token');
+const restricted = require('../utilities/restricted-middleware');
 
 const router = express.Router();
 router.use(express.json());
@@ -85,6 +86,7 @@ router.post('/register', (req, res) => {
 
 // GET USER BY USERNAME. UTILITY FUNCTION. NOT FOR GENERAL USE!
 // FOR THE SAKE OF NEAR CRUD-COMPLETE FUNCTIONALITY
+// router.get('/', restricted, (req, res) => {
 router.get('/', (req, res) => {
   auth.getUser(req.body)
     .then(data => {
@@ -101,6 +103,7 @@ router.get('/', (req, res) => {
 
 // UPDATE USER
 // :id REFERS TO (user) ID
+// router.put('/:id', restricted,(req, res) => {
 router.put('/:id', (req, res) => {
   const {id} = req.params
   const updates = req.body;
@@ -121,6 +124,7 @@ router.put('/:id', (req, res) => {
 })
 
 // DELETE USER VIA ID IN PARAMS
+// router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params
   auth.deleteUser(id)

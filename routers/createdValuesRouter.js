@@ -1,6 +1,9 @@
 const express = require('express');
 const createdValues = require('../models/createdValuesModel');
 
+const restricted = require('../utilities/restricted-middleware');
+
+
 const router = express.Router();
 router.use(express.json());
 
@@ -21,6 +24,7 @@ const error500 = {
 // }
 
 // GET ALL CREATED VALUES LINKED TO A USER. ID REFERS TO USER ID!
+// router.get('/:id', restricted, (req, res) => {
 router.get('/:id', (req, res) => {
   const user_id = req.params;
   if (!user_id) {
@@ -37,6 +41,7 @@ router.get('/:id', (req, res) => {
   }
 });
 
+// router.post('/', restricted,(req, res) => {
 router.post('/', (req, res) => {
   const createdValue = req.body;
   if (
@@ -63,6 +68,7 @@ router.post('/', (req, res) => {
   }
 });
 
+// router.put('/:id', restricted, (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const update = req.body;
@@ -92,6 +98,7 @@ router.put('/:id', (req, res) => {
   }
 });
 
+// router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
   createdValues
