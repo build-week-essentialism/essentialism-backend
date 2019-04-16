@@ -124,8 +124,24 @@ router.put('/:user_id', (req, res) => {
     })
 })
 
-router.delete('/', (req, res) => {
-  
+// user_id is passed in body and refers to the user
+// :id refers to value_id
+// !!! I HAVEN'T FIGURED OUT A WAY YET TO CHECK IF THE USER_ID IS CONNECTED TO THE VALUE ID. IN EDGE CASES, COULD LEAD TO ISSUES
+router.delete('/:user_id', (req, res) => {
+  const { user_id } = req.params;
+  const { id } = req.body;
+  // CHECK BODY FOR ID
+  if (!id) {
+    res.status(400).json({ message: "Please make sure you pass an 'id' in the body, referring to the user-value id"})
+  }
+  userValues.deleteUserValue(user_id, id)
+    .then(values => {
+      res.status(200).json(values)
+    })
+    .catch(() => {
+      res.status(500).json(error500)
+    })
+
 })
 
 module.exports = router;
