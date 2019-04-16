@@ -40,6 +40,94 @@ router.get('/:user_id', (req, res) => {
     })
 });
 
+// ADD USER-VALUE ENTRY
+router.post('/', (req, res) => {
+
+})
+
+// EDIT PREVIOUSLY-MADE USER-VALUE ENTRY.
+// USER_ID REFERS TO USER_ID IN THE USERS TABLE. IT'S USED TO RETURN ALL VALUES OF THAT USER
+// BODY HAS TO CONTAIN USER VALUE ID (ID)
+// FINALLY, ONLY VALUE_RANK ***OR*** VALUE_IMPORTANCE CAN BE USED AS 'UPDATE' PARAMETER IN UPDATEUSERVALUE  
+// IF OTHER VALUES GET PASSED IN BODY, THEY GET DISREGARDED AND NOT PASSED TO THE MODEL
+// !!! HOWEVER, I HAVEN'T FIGURED OUT A WAY YET TO CHECK IF THE USER_ID IS CONNECTED TO THE VALUE ID. IN EDGE CASES, COULD LEAD TO ISSUES
+router.put('/:user_id', (req, res) => {
+  const { user_id } = req.params;
+  const { id, value_rank, value_importance } = req.body;
+  // CHECK BODY FOR ID
+  if (!id) {
+    res.status(400).json({ message: "Please make sure you pass an 'id' in the body, referring to the user-value id"})
+  }
+  userValues.getUserValues(user_id)
+    .then(user => {
+      // IF NO USER OR NO USER-VALUES ARE FOUND
+      if(user.length < 1) {
+        res.status(404).json({ message: `There's either no user with user_id of ${user_id} or the user has no values to update`})
+      } else {
+
+        // IF NEITHER ARE PASSED, RETURN 404
+        if (!value_importance && !value_rank) {
+          res.status(400).json({ message: "Make sure you pass a 'value_importance' or 'value_rank' value in the body. That's the only thing this endpoint accepts"})
+        }
+      
+        // ONLY UPDATING VALUE_RANK
+        else if (!value_importance && value_rank) {
+          userValues.updateUserValue(user_id, id ,{"value_rank": value_rank})
+            .then(values => {
+              console.log('updating value_rank')
+              if (values.length < 1) {
+                res.status(404).json({ message: `There's no user with the user_id of ${user_id}, so we couldn't update any values connected to it.`})
+              } else {
+                res.status(200).json(values)
+              }
+            })
+            .catch(() => {
+              res.status(500).json(error500)
+            })
+        } 
+
+        // ONLY UPDATING VALUE_IMPORTANCE
+        else if (value_importance && !value_rank) {
+          userValues.updateUserValue(user_id, id ,{"value_importance": value_importance})
+            .then(values => {
+              console.log('updating value_imporatnce')
+              if (values.length < 1) {
+                res.status(404).json({ message: `There's no user with the user_id of ${user_id}, so we couldn't update any values connected to it.`})
+              } else {
+                res.status(200).json(values)
+              }
+            })
+            .catch(() => {
+              res.status(500).json(error500)
+            })
+        }
+
+        // UPDATING BOTH VALUE_RANK AND VALUE_IMPORTANCE
+        else if (value_rank && value_importance) {
+          userValues.updateUserValue(user_id, id ,{"value_rank": value_rank, "value_importance": value_importance})
+            .then(values => {
+              console.log('updating both')
+              if (values.length < 1) {
+                res.status(404).json({ message: `There's no user with the user_id of ${user_id}, so we couldn't update any values connected to it.`})
+              } else {
+                res.status(200).json(values)
+              }
+            })
+            .catch(() => {
+              res.status(500).json(error500)
+            })
+        } 
+      }
+    })
+    .catch(() => {
+      res.status(500).json({message: "Something went wrong when trying to check for the user_id"})
+    })
+})
+
+router.delete('/', (req, res) => {
+  
+})
+
 module.exports = router;
 
 // Scrubbing an improper request:
