@@ -1,6 +1,8 @@
 const express = require('express');
 const userValues = require('../models/userValuesModel');
 
+const restricted = require('../utilities/restricted-middleware');
+
 const router = express.Router();
 router.use(express.json());
 
@@ -24,6 +26,7 @@ const error500 = {
 //   "value_rank": 2,
 //   "value_importance": "I love sports"
 // }
+// router.get('/:user_id', restricted,(req, res) => {
 router.get('/:user_id', (req, res) => {
   const {user_id} = req.params
   userValues.getUserValues(user_id)
@@ -41,6 +44,7 @@ router.get('/:user_id', (req, res) => {
 });
 
 // ADD USER-VALUE ENTRY
+// router.post('/', restricted,(req, res) => {
 router.post('/', (req, res) => {
   const { user_id, default_value_id, created_value_id } = req.body
   
@@ -88,6 +92,7 @@ router.post('/', (req, res) => {
 // FINALLY, ONLY VALUE_RANK ***OR*** VALUE_IMPORTANCE CAN BE USED AS 'UPDATE' PARAMETER IN UPDATEUSERVALUE  
 // IF OTHER VALUES GET PASSED IN BODY, THEY GET DISREGARDED AND NOT PASSED TO THE MODEL
 // !!! HOWEVER, I HAVEN'T FIGURED OUT A WAY YET TO CHECK IF THE USER_ID IS CONNECTED TO THE VALUE ID. IN EDGE CASES, COULD LEAD TO ISSUES
+// router.put('/:user_id', restricted,(req, res) => {
 router.put('/:user_id', (req, res) => {
   const { user_id } = req.params;
   const { id, value_rank, value_importance } = req.body;
@@ -164,6 +169,7 @@ router.put('/:user_id', (req, res) => {
 // user_id is passed in body and refers to the user
 // :id refers to value_id
 // !!! I HAVEN'T FIGURED OUT A WAY YET TO CHECK IF THE USER_ID IS CONNECTED TO THE VALUE ID. IN EDGE CASES, COULD LEAD TO ISSUES
+// router.delete('/:user_id', restricted,(req, res) => {
 router.delete('/:user_id', (req, res) => {
   const { user_id } = req.params;
   const { id } = req.body;
