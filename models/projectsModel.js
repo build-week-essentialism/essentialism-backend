@@ -15,10 +15,10 @@ const addProject = async project => {
 };
 
 // The id parameter is the project id (primary key)
-const updateProject = async (id, update) => {
+const updateProject = async (id, updates) => {
   await db('projects')
     .where({ id })
-    .update(update);
+    .update(updates);
   return await db('projects')
     .where({ id })
     .first();

@@ -15,6 +15,7 @@ exports.up = function(knex) {
       .boolean('project_active')
       .notNullable()
       .defaultTo(true);
+    table.integer('proj_val_align').defaultTo(0);
   });
 };
 

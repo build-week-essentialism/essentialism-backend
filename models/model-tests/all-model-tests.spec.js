@@ -26,6 +26,7 @@ const testInputProject = { user_id: 1, project_name: 'coding' };
 
 const testOutputProject = {
   id: 1,
+  proj_val_align: 0,
   project_active: 1,
   user_id: 1,
   project_name: 'coding'
@@ -276,10 +277,12 @@ describe('ProjectsModel', () => {
       const Project = await Projects.addProject(testInputProject);
       expect(Project).toEqual(testOutputProject);
       const updatedProject = await Projects.updateProject(1, {
-        project_name: 'jogging'
+        project_name: 'jogging',
+        proj_val_align: 5
       });
       expect(updatedProject).toEqual({
         id: 1,
+        proj_val_align: 5,
         project_active: 1,
         user_id: 1,
         project_name: 'jogging'
