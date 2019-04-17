@@ -101,8 +101,9 @@ router.put('/:id', (req, res) => {
 // router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
+  const user_id = req.body.user_id
   createdValues
-    .deleteCreatedValue(id)
+    .deleteCreatedValue(user_id, id)
     .then(data => {
       if (!data) {
         res
