@@ -73,6 +73,10 @@ router.put('/:id', (req, res) => {
   const { id } = req.params;
   const user_id = req.body.user_id
   const update = req.body;
+  const updateHolder = {}
+  if (!updated.created_value_name) {
+    updateHolder = { user_id }
+  }
   if (!update.created_value_name && !update.user_id) {
     res
       .status(404)
@@ -81,8 +85,9 @@ router.put('/:id', (req, res) => {
           "Be sure to pass either 'created_value_name' or 'user_id' if you want to change 'em"
       });
   } else {
+    updateHolder = {user_id, created_value_name: update.created_value_name}
     createdValues
-      .updateCreatedValue(user_id, id, update)
+      .updateCreatedValue(user_id, id, updateHolder)
       .then(data => {
         if (!data) {
           res
