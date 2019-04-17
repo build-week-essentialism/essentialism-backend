@@ -71,6 +71,7 @@ router.post('/', (req, res) => {
 // router.put('/:id', restricted, (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
+  const user_id = req.body.user_id
   const update = req.body;
   if (!update.created_value_name && !update.user_id) {
     res
@@ -81,7 +82,7 @@ router.put('/:id', (req, res) => {
       });
   } else {
     createdValues
-      .updateCreatedValue(id, update)
+      .updateCreatedValue(user_id, id, update)
       .then(data => {
         if (!data) {
           res
@@ -101,8 +102,12 @@ router.put('/:id', (req, res) => {
 // router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
+  const user_id = req.body.user_id
+  if (!user_id) {
+    res.status(404).json({ message: "Pass me a 'user_id'!" })
+  }
   createdValues
-    .deleteCreatedValue(id)
+    .deleteCreatedValue(user_id, id)
     .then(data => {
       if (!data) {
         res
@@ -116,6 +121,6 @@ router.delete('/:id', (req, res) => {
     .catch(() => {
       res.status(500).json(error500);
     });
-});
+});  
 
 module.exports = router;
