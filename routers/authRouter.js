@@ -108,7 +108,7 @@ router.put('/:id', (req, res) => {
   const {id} = req.params
   const updates = req.body;
   // CHECK IF THE INFO PROVIDED IN THE BODY CORRESPONDS TO VALUE IN THE USER-TALBE
-  if (!updates.username && !updates.password && !updates.email && !updates.firstName && !updates.firstName) {
+  if (!updates.username && !updates.password && !updates.email && !updates.firstName && !updates.lastName) {
     res.status(404).json({
       message:`Hey, I don't know what to do with the data you provided! Make sure the data is already found in the user model!`})
   } else {
