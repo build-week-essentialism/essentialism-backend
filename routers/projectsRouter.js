@@ -66,10 +66,22 @@ router.post('/', (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
   const update = req.body;
+  const updateHolder = {}
   const user_id = req.body.user_id;
   
   if (!user_id) {
     res.status(404).json({ message: "Pass me a 'user_id'!" })
+  }
+
+  if (update.project_name && update.user_id) {
+    updateHolder = {
+      user_id,
+      project_name: update.project_name
+    }
+  } else {
+    updateHolder = {
+      user_id,
+    }
   }
 
   if (!update.project_name && !update.user_id) {
@@ -79,7 +91,7 @@ router.put('/:id', (req, res) => {
     });
   } else {
     projects
-      .updateProject(user_id, id, update)
+      .updateProject(user_id, id, updateHolder)
       .then(data => {
         if (!data) {
           res
