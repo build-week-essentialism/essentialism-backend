@@ -103,6 +103,9 @@ router.put('/:id', (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
   const user_id = req.body.user_id
+  if (!user_id) {
+    res.status(404).json({ message: "Pass me a 'user_id'!" })
+  }
   createdValues
     .deleteCreatedValue(user_id, id)
     .then(data => {
@@ -118,6 +121,6 @@ router.delete('/:id', (req, res) => {
     .catch(() => {
       res.status(500).json(error500);
     });
-});
+});  
 
 module.exports = router;
