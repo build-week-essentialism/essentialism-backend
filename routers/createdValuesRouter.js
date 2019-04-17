@@ -71,6 +71,7 @@ router.post('/', (req, res) => {
 // router.put('/:id', restricted, (req, res) => {
 router.put('/:id', (req, res) => {
   const { id } = req.params;
+  const user_id = req.body.user_id
   const update = req.body;
   if (!update.created_value_name && !update.user_id) {
     res
@@ -81,7 +82,7 @@ router.put('/:id', (req, res) => {
       });
   } else {
     createdValues
-      .updateCreatedValue(id, update)
+      .updateCreatedValue(user_id, id, update)
       .then(data => {
         if (!data) {
           res
