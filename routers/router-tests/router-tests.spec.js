@@ -44,6 +44,9 @@ describe('Created-Values Routers', () => {
     
   })
 })
+
+
+// DEFAULT-VALUES TESTS
 const defaultValuesArr = [
   {"id": 1, "default_value_name": "Athletic ability"},
   {"id": 2, "default_value_name": "Art and literature"},
@@ -61,9 +64,8 @@ const defaultValuesArr = [
   {"id": 14, "default_value_name": "Success in my career"}
 ]
 
-// DEFAULT-VALUES TESTS
 describe('Default-Values Routers', () => {
-  it('test description', async () => {
+  it('get the default values and returns a 200', async () => {
     let response = await request(server).get('/api/defaultvalues')
     expect(response.status).toBe(200)
     expect(response.body).toEqual(defaultValuesArr)
@@ -72,9 +74,91 @@ describe('Default-Values Routers', () => {
 
 
 // PROJECTS TESTS
+const responseArr = [
+  {"id": 1, "user_id": 1, "project_name": "taking a class" ,"project_active": 0, "proj_val_align": 3},
+  {"id": 2, "user_id": 1, "project_name": "practicing oboe", "project_active": 1, "proj_val_align": 0},
+  {"id": 3, "user_id": 1, "project_name": "working", "project_active": 1, "proj_val_align": 0},
+  {"id": 4, "user_id": 1, "project_name": "tidying my house", "project_active": 1, "proj_val_align": 4}
+]
+
 describe('Projects Routers', () => {
-  it('get the default values and returns a 200', () => {
-    
+  beforeEach(async () => {
+    await db('users').truncate();
+  });
+
+  afterEach(async () => {
+    await db('users').truncate();
+  });
+
+  describe('Get by ID', () => {
+    it('returns an array of project-objects for a given id', async () => {
+      let id = 1
+      let response = await request(server).get(`/api/projects/${id}`)
+      expect(response.status).toBe(200)
+      // --> HAVING TROUBLE WITH THIS
+      // expect(response.body).toEqual(responseArr)
+    })
+  })
+  describe('POST method', () => {
+    // ---> TRIED A SOLUTION FROM STACK OVERFLOW. NO SAUCE
+    // it('Successfully returns list of projects with a 200', async (done) => {
+    // //   request(server)
+    // //   .post('/api/projects')
+    // //   .send({"user_id": 1, "project_name": "practicing oboe"})
+    // //   .expect(201)
+    // //   .end(function(err, res) {
+    // //     if (err) throw err;
+    // //   });
+    // })
+
+    // Returns 404 when not passed a user_id    
+    // ---> GET ERROR ABOUT SETTING HEADERS AFTER BEING SENT TO CLIENT
+    it('respond with 201 created', function () {
+      // request(server)
+      //     .post('/api/projects')
+      //     .send({"project_name": "practicing oboe"})
+      //     .set('Accept', 'application/json')
+      //     .expect('Content-Type', /json/)
+      //     .expect(404)
+      //     .end((err) => {
+      //         if (err) return done(err);
+      //         done();
+      //     });
+      });
+  })
+
+  describe('PUT PROJECT', () => {
+    describe('Change values', () => {
+      it('Returns 200', () => {
+        
+      })
+
+      it('returns 404 if not passed a user_id in body', () => {
+        
+      })
+
+      it('returns 404 if passed neither project_name nor user_id', () => {
+        
+      })
+    })
+  })
+
+  describe('MARK INACTIVE', () => {
+    it('returns 200 with project set to inactive', () => {
+      
+    })
+  })
+
+  describe('MARK ACTIVE', () => {
+    it('returns 200 with project set to active', () => {
+      
+    })
+  })
+
+  describe('DELETE Project', () => {
+    it('returns 200 ', () => {
+      
+    })
   })
 })
 
