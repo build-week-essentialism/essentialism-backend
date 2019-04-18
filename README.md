@@ -5,7 +5,7 @@
 - [Deployment](#deployment)
 - [Tech Stack](#techStack)
 - [Project Summary](#projectSummary)
-- [Endpoints (for frontend usage)](#frontEnd)
+- [Endpoints (for frontend usage)](#frontend)
   - [api/auth](#authEndpoints)
   - [api/createdvalues](#createdValuesEndpoints)
   - [api/defaultvalues](#defaultValuesEndpoints)
@@ -41,7 +41,7 @@
 
 In a world with everything shouting for you attention, the disciplined pursuit of less has never been more needed. Enter Essentialism. The Way of the Essentialist involves doing less, but better, so you can make the highest possible contribution. It’s not about getting more done in less time or getting less done. It’s about getting only the right things done. It’s about regaining control of our own choices about where to spend our time and energies instead of giving others implicit permission to choose for us. The first step to essentialism is identifying your values.
 
-# Endpoints (for frontend usage) <a name="frontEnd"></a>
+# Endpoints (for frontend usage) <a name="frontend"></a>
 
 ### Global CRUD Rules
 
@@ -54,7 +54,7 @@ In a world with everything shouting for you attention, the disciplined pursuit o
 
 ---
 
-# api/auth <a name="AuthEnd"></a>
+# api/auth <a name="authEndpoints"></a>
 
 ---
 
@@ -83,7 +83,6 @@ Body:
 ##### Example Response:
 
 ```
-Body:
 {
     "message": "Welcome billie!",
     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -126,7 +125,6 @@ Body:
 ##### Example Response:
 
 ```
-Body:
 {
     "id": 4,
     "username": "tandy",
@@ -144,7 +142,7 @@ Body:
 
 ##### Required (unless marked optional):
 
-**Header**: JWT token
+**Header**: JSON web token
 **URL Params**: user id (PK of users table)
 **Body**:
 (at least one of the five is required)
@@ -170,7 +168,6 @@ Body:
 ##### Example Response:
 
 ```
-Body:
 {
     "id": 1,
     "username": "billie",
@@ -188,7 +185,7 @@ Body:
 
 ##### Required (unless marked optional):
 
-**Header**: JWT token
+**Header**: JSON web token
 **URL Params**: user id (PK of users table)
 **Body**: none
 
@@ -203,13 +200,225 @@ Body: none
 ##### Example Response:
 
 ```
-Body:
 {
     "message": "User with ID of 1 successfully deleted"
 }
 ```
 
 ---
+
+# api/createdvalues <a name="createdValuesEndpoints"></a>
+
+---
+
+#### GET `api/createdvalues/:id`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: user_id (FK in created-values table for PK of users table)
+**Body**: none
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 1
+Body: none
+```
+
+##### Example Response:
+
+```
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "created_value_name": "emotional expression"
+    },
+    {
+        "id": 2,
+        "user_id": 1,
+        "created_value_name": "staying in touch with nature"
+    }
+]
+```
+
+---
+
+---
+
+#### POST `api/createdvalues`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: none
+**Body**:
+user_id: string
+created_value_name: string, up to 64 characters
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: none
+Body:
+{
+    user_id: 1,
+    created_value_name: 'healthy eating'
+}
+```
+
+##### Example Response:
+
+```
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "created_value_name": "emotional expression"
+    },
+    {
+        "id": 2,
+        "user_id": 1,
+        "created_value_name": "staying in touch with nature"
+    },
+    {
+        "id": 9,
+        "user_id": 1,
+        "created_value_name": "healthy eating"
+    }
+]
+```
+
+---
+
+#### PUT `api/createdvalues/:id`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: created value id (PK of created-values table)
+**Body**:
+user_id: (FK in created-values table for PK of users table)
+update: object with property created_value_name
+created_value_name: string, up to 64 characters
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 9
+Body:
+{
+    user_id: 1,
+    update: {
+        created_value_name: 'adventure'
+    }
+}
+```
+
+##### Example Response:
+
+```
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "created_value_name": "emotional expression"
+    },
+    {
+        "id": 2,
+        "user_id": 1,
+        "created_value_name": "staying in touch with nature"
+    },
+    {
+        "id": 9,
+        "user_id": 1,
+        "created_value_name": "adventure"
+    }
+]
+```
+
+---
+
+#### DELETE `api/createdvalues/:id`
+
+##### Required (unless marked optional):
+
+**Header**: JWT token
+**URL Params**: created value id (PK of created-values table)
+**Body**: none
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 9
+Body: none
+```
+
+##### Example Response:
+
+```
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "created_value_name": "emotional expression"
+    },
+    {
+        "id": 2,
+        "user_id": 1,
+        "created_value_name": "staying in touch with nature"
+    }
+]
+```
+
+---
+
+# api/defaultvalues <a name="defaultValuesEndpoints"></a>
+
+---
+
+#### GET `api/defaultvalues`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: none
+**Body**: none
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: none
+Body: none
+```
+
+##### Example Response:
+
+```
+[
+    {
+        "id": 1,
+        "default_value_name": "Athletic ability"
+    },
+    {
+        "id": 2,
+        "default_value_name": "Art and literature"
+    },
+    <more default value objects>
+]
+```
+
+---
+
+# api/projects <a name="projectsEndpoints"></a>
+
+# api/uservalues <a name="userValuesEndpoints"></a>
 
 # Table Schema <a name="tableSchema"></a>
 
