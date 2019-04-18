@@ -3,7 +3,6 @@ const createdValues = require('../models/createdValuesModel');
 
 const restricted = require('../utilities/restricted-middleware');
 
-
 const router = express.Router();
 router.use(express.json());
 
@@ -49,12 +48,10 @@ router.post('/', (req, res) => {
     !createdValue.created_value_name ||
     !createdValue.user_id
   ) {
-    res
-      .status(404)
-      .json({
-        message:
-          "Please provide a 'created_value_name' and the 'user_id' of the corresponding user"
-      });
+    res.status(404).json({
+      message:
+        "Please provide a 'created_value_name' and the 'user_id' of the corresponding user"
+    });
   } else {
     createdValues
       .addCreatedValue(createdValue)
@@ -70,16 +67,14 @@ router.post('/', (req, res) => {
 
 // router.put('/:id', restricted, (req, res) => {
 router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const user_id = req.body.user_id
-  const update = req.body;
-  if (!update.created_value_name && !update.user_id) {
-    res
-      .status(404)
-      .json({
-        message:
-          "Be sure to pass either 'created_value_name' or 'user_id' if you want to change 'em"
-      });
+  // The following excludes id and user_id from update:
+  let { id, user_id, ...update } = req.body.update;
+  id = req.params.id;
+  user_id = req.body.user_id;
+  if (!update.created_value_name) {
+    res.status(404).json({
+      message: "Be sure to pass 'created_value_name' if you want to change it."
+    });
   } else {
     createdValues
       .updateCreatedValue(user_id, id, update)
@@ -102,9 +97,9 @@ router.put('/:id', (req, res) => {
 // router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  const user_id = req.body.user_id
+  const user_id = req.body.user_id;
   if (!user_id) {
-    res.status(404).json({ message: "Pass me a 'user_id'!" })
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
   }
   createdValues
     .deleteCreatedValue(user_id, id)
@@ -121,6 +116,5 @@ router.delete('/:id', (req, res) => {
     .catch(() => {
       res.status(500).json(error500);
     });
-});  
-
+});
 module.exports = router;
