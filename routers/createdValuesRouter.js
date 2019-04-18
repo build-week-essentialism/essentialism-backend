@@ -3,7 +3,6 @@ const createdValues = require('../models/createdValuesModel');
 
 const restricted = require('../utilities/restricted-middleware');
 
-
 const router = express.Router();
 router.use(express.json());
 
@@ -49,12 +48,10 @@ router.post('/', (req, res) => {
     !createdValue.created_value_name ||
     !createdValue.user_id
   ) {
-    res
-      .status(404)
-      .json({
-        message:
-          "Please provide a 'created_value_name' and the 'user_id' of the corresponding user"
-      });
+    res.status(404).json({
+      message:
+        "Please provide a 'created_value_name' and the 'user_id' of the corresponding user"
+    });
   } else {
     createdValues
       .addCreatedValue(createdValue)
@@ -107,9 +104,9 @@ router.put('/:id', (req, res) => {
 // router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
-  const user_id = req.body.user_id
+  const user_id = req.body.user_id;
   if (!user_id) {
-    res.status(404).json({ message: "Pass me a 'user_id'!" })
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
   }
   createdValues
     .deleteCreatedValue(user_id, id)
@@ -126,6 +123,5 @@ router.delete('/:id', (req, res) => {
     .catch(() => {
       res.status(500).json(error500);
     });
-});  
-
+});
 module.exports = router;

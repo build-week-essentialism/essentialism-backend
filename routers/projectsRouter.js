@@ -75,7 +75,7 @@ router.put('/:id', (req, res) => {
   const user_id = req.body.user_id;
   
   if (!user_id) {
-    res.status(404).json({ message: "Pass me a 'user_id'!" })
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
   }
 
   
@@ -99,7 +99,7 @@ router.put('/:id', (req, res) => {
   if (!update.project_name && !update.user_id) {
     res.status(404).json({
       message:
-        "Be sure to pass either 'project_name' or 'user_id' if you want to change 'em"
+        "Be sure to pass either 'project_name' or 'proj_val_align' if you want to change 'em"
     });
   } else {
     projects
@@ -123,9 +123,9 @@ router.put('/:id', (req, res) => {
 router.put('/:id/inactive', (req, res) => {
   const { id } = req.params;
   const user_id = req.body.user_id;
-  
+
   if (!user_id) {
-    res.status(404).json({ message: "Pass me a 'user_id'!" })
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
   }
 
   projects
@@ -150,9 +150,9 @@ router.put('/:id/inactive', (req, res) => {
 router.put('/:id/active', (req, res) => {
   const { id } = req.params;
   const user_id = req.body.user_id;
-  
+
   if (!user_id) {
-    res.status(404).json({ message: "Pass me a 'user_id'!" })
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
   }
 
   projects
@@ -176,7 +176,7 @@ router.delete('/:id', (req, res) => {
   const user_id = req.body.user_id;
 
   if (!user_id) {
-    res.status(404).json({ message: "Pass me a 'user_id'!" })
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
   }
 
   projects
