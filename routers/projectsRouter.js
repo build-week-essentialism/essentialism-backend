@@ -1,19 +1,19 @@
 const express = require('express');
-const projects = require('../models/projectsModel')
+const projects = require('../models/projectsModel');
 
 const restricted = require('../utilities/restricted-middleware');
 
 const router = express.Router();
 router.use(express.json());
 
-
 const error404 = {
   message: "The requested resource doesn't exist"
-}
+};
 
 const error500 = {
-  message: "Something went wrong when getting your request. Make sure the request is foolproof"
-}
+  message:
+    'Something went wrong when getting your request. Make sure the request is foolproof'
+};
 
 // Project object
 // {
@@ -26,105 +26,147 @@ const error500 = {
 // GET ALL PROJECTS LINKED TO A USER. ID REFERS TO USER_ID, WHICH IS LINKED TO ID IN USERS
 // router.get('/:id', restricted,(req, res) => {
 router.get('/:id', (req, res) => {
-  const user_id = req.params
+  const user_id = req.params;
   if (!user_id) {
-    res.status(404).json(error404)
+    res.status(404).json(error404);
   } else {
-    projects.getProjects(user_id.id)
+    projects
+      .getProjects(user_id.id)
       .then(data => {
-        res.status(200).json(data)
+        res.status(200).json(data);
       })
       .catch(() => {
-        res.status(500).json(error500)
-      })
+        res.status(500).json(error500);
+      });
   }
-})
+});
 
 // router.post('/', restricted,(req, res) => {
 router.post('/', (req, res) => {
-  const project = req.body
+  const project = req.body;
   if (!project.user_id || !project.project_name) {
-    res.status(404).json({ message: "Please make sure you pass both a 'user_id' and a 'project_name'"})
+    res.status(404).json({
+      message: "Please make sure you pass both a 'user_id' and a 'project_name'"
+    });
   } else {
-    projects.addProject(project)
+    projects
+      .addProject(project)
       .then(data => {
         // RETURNS NEWLY-MADE PROJECT OBJECT
-        res.status(201).json(data)
+        res.status(201).json(data);
       })
       .catch(() => {
-        res.status(500).json(error500)
-      })
+        res.status(500).json(error500);
+      });
   }
-})
+});
 
 // Update Project
 // router.put('/:id', restricted,(req, res) => {
 router.put('/:id', (req, res) => {
-  const { id } = req.params;
-  const update = req.body
-  if (!update.project_name && !update.user_id) {
-    res.status(404).json({ message: "Be sure to pass either 'project_name' or 'user_id' if you want to change 'em"})
+  let { id, user_id, ...updates } = req.body.updates;
+  id = req.params.id;
+  user_id = req.body.user_id;
+  if (!user_id) {
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
+  }
+
+  if (!updates.project_name && !updates.proj_val_align) {
+    res.status(404).json({
+      message:
+        "Be sure to pass either 'project_name' or 'proj_val_align' if you want to change 'em"
+    });
   } else {
-    projects.updateProject(id, update)
+    projects
+      .updateProject(user_id, id, updates)
       .then(data => {
         if (!data) {
-          res.status(404).json({ message: `No existing project with the id of ${id}`})
+          res
+            .status(404)
+            .json({ message: `No existing project with the id of ${id}` });
         } else {
           // Returns updated createdValue object
-          res.status(200).json(data)
+          res.status(200).json(data);
         }
       })
-      .catch(() => res.status(500).json(error500) )
+      .catch(() => res.status(500).json(error500));
   }
-})
+});
 
 // SET PROJECT TO INACTIVE
 // router.put('/:id/inactive', restricted,(req, res) => {
 router.put('/:id/inactive', (req, res) => {
   const { id } = req.params;
-  projects.updateProject(id, {"project_active": false})
+  const user_id = req.body.user_id;
+
+  if (!user_id) {
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
+  }
+
+  projects
+    .updateProject(user_id, id, { project_active: false })
     .then(data => {
       if (!data) {
-        res.status(404).json({ message: `No existing project with the id of ${id}`})
+        res
+          .status(404)
+          .json({ message: `No existing project with the id of ${id}` });
       } else {
         // Returns updated createdValue object
-        res.status(200).json(data)
+        res.status(200).json(data);
       }
     })
-    .catch(() => { res.status(500).json(error500) })
-  }
-)
+    .catch(() => {
+      res.status(500).json(error500);
+    });
+});
 
 // SET PROJECT TO ACTIVE
 // router.put('/:id/active', restricted, (req, res) => {
 router.put('/:id/active', (req, res) => {
   const { id } = req.params;
-  projects.updateProject(id, {"project_active": true})
+  const user_id = req.body.user_id;
+
+  if (!user_id) {
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
+  }
+
+  projects
+    .updateProject(user_id, id, { project_active: true })
     .then(data => {
       if (!data) {
-        res.status(404).json({ message: `No existing project with the id of ${id}`})
+        res
+          .status(404)
+          .json({ message: `No existing project with the id of ${id}` });
       } else {
         // Returns updated createdValue object
-        res.status(200).json(data)
+        res.status(200).json(data);
       }
     })
-    .catch(() => res.status(500).json(error500))
-  }
-)
+    .catch(() => res.status(500).json(error500));
+});
 
 // router.delete('/:id', restricted, (req, res) => {
 router.delete('/:id', (req, res) => {
-  const { id } = req.params
-  projects.deleteProject(id)
+  const { id } = req.params;
+  const user_id = req.body.user_id;
+
+  if (!user_id) {
+    res.status(404).json({ message: "Pass me a 'user_id'!" });
+  }
+
+  projects
+    .deleteProject(user_id, id)
     .then(data => {
       if (!data) {
-        res.status(404).json({ message: `There's no project with the id of ${id}`})
+        res
+          .status(404)
+          .json({ message: `There's no project with the id of ${id}` });
       } else {
         // Returns number of records deleted (1)
-        res.status(200).json(data)
+        res.status(200).json(data);
       }
     })
-    .catch(() => res.status(500).json(error500))
-})
+    .catch(() => res.status(500).json(error500));
+});
 
 module.exports = router;
