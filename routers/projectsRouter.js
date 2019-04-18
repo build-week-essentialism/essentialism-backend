@@ -21,6 +21,7 @@ const error500 = {
 //   "user_id": 1,  <-- REFERENCES ID IN USERS (FOREIGN KEY)
 //   "project_name": "taking a class",
 //   "project_active": 1  <-- IS A BOOLEAN. DEFAULT = 1 (TRUE)
+//   "proj_val_align": 0
 // }
 
 // GET ALL PROJECTS LINKED TO A USER. ID REFERS TO USER_ID, WHICH IS LINKED TO ID IN USERS
@@ -44,11 +45,15 @@ router.get('/:id', (req, res) => {
 // router.post('/', restricted,(req, res) => {
 router.post('/', (req, res) => {
   const project = req.body;
-  if (!project.user_id || !project.project_name) {
+  if (!project.user_id) {
     res.status(404).json({
-      message: "Please make sure you pass both a 'user_id' and a 'project_name'"
+      message: "Please make sure you pass a 'user_id'"
     });
-  } else {
+  } 
+  if (project.proj_val_align < 0 || project.proj_val_align > 10) {
+    project.proj_val_align = 0;
+  }
+  else {
     projects
       .addProject(project)
       .then(data => {
@@ -64,21 +69,41 @@ router.post('/', (req, res) => {
 // Update Project
 // router.put('/:id', restricted,(req, res) => {
 router.put('/:id', (req, res) => {
-  let { id, user_id, ...updates } = req.body.updates;
-  id = req.params.id;
-  user_id = req.body.user_id;
+  const { id } = req.params;
+  const update = req.body;
+  const updateHolder = {}
+  const user_id = req.body.user_id;
+  
   if (!user_id) {
     res.status(404).json({ message: "Pass me a 'user_id'!" });
   }
 
-  if (!updates.project_name && !updates.proj_val_align) {
+  
+  if (update.project_name && update.user_id) {
+    updateHolder = {
+      user_id,
+      project_name: update.project_name
+    }
+  } else {
+    updateHolder = {
+      user_id,
+    }
+  }
+
+  if (update.proj_val_align) {
+    if (project.proj_val_align < 0 || project.proj_val_align > 10) {
+      updateHolder.proj_val_align = 0;
+    }
+  }
+
+  if (!update.project_name && !update.user_id) {
     res.status(404).json({
       message:
         "Be sure to pass either 'project_name' or 'proj_val_align' if you want to change 'em"
     });
   } else {
     projects
-      .updateProject(user_id, id, updates)
+      .updateProject(user_id, id, updateHolder)
       .then(data => {
         if (!data) {
           res
