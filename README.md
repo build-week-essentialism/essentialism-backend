@@ -216,7 +216,7 @@ Body: none
 ##### Required (unless marked optional):
 
 **Header**: JSON web token
-**URL Params**: user_id (FK in created-values table for PK of users table)
+**URL Params**: user_id: integer (FK in created-values table for PK of users table)
 **Body**: none
 
 ##### Example Request:
@@ -246,8 +246,6 @@ Body: none
 
 ---
 
----
-
 #### POST `api/createdvalues`
 
 ##### Required (unless marked optional):
@@ -255,7 +253,7 @@ Body: none
 **Header**: JSON web token
 **URL Params**: none
 **Body**:
-user_id: string
+user_id: integer (FK in created-values table for PK of users table)
 created_value_name: string, up to 64 characters
 
 ##### Example Request:
@@ -301,7 +299,7 @@ Body:
 **Header**: JSON web token
 **URL Params**: created value id (PK of created-values table)
 **Body**:
-user_id: (FK in created-values table for PK of users table)
+user_id: integer (FK in created-values table for PK of users table)
 update: object with property created_value_name
 created_value_name: string, up to 64 characters
 
@@ -349,14 +347,18 @@ Body:
 
 **Header**: JWT token
 **URL Params**: created value id (PK of created-values table)
-**Body**: none
+**Body**:
+user_id: integer (FK in created-values table for PK of users table)
 
 ##### Example Request:
 
 ```
 Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 URL Params: 9
-Body: none
+Body:
+{
+    user_id: 1
+}
 ```
 
 ##### Example Response:
@@ -373,6 +375,7 @@ Body: none
         "user_id": 1,
         "created_value_name": "staying in touch with nature"
     }
+    <does not include created value that was deleted>
 ]
 ```
 
@@ -417,6 +420,250 @@ Body: none
 ---
 
 # api/projects <a name="projectsEndpoints"></a>
+
+---
+
+#### GET `api/projects/:id`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: user_id: integer (FK in projects table for PK of users table)
+**Body**: none
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 1
+Body: none
+```
+
+##### Example Response:
+
+```
+[
+    {
+        "id": 1,
+        "user_id": 1,
+        "project_name": "taking a class",
+        "project_active": 0,
+        "proj_val_align": 3
+    },
+    {
+        "id": 2,
+        "user_id": 1,
+        "project_name": "practicing oboe",
+        "project_active": 1,
+        "proj_val_align": 0
+    },
+    <other project objects>
+]
+```
+
+---
+
+#### POST `api/projects`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: none
+**Body**:
+user_id: integer (FK in projects table for PK of users table)
+project_name: string, up to 64 characters
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: none
+Body:
+{
+	"user_id": 1,
+	"project_name": "hiking"
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other project objects>
+    {
+        "id": 11,
+        "user_id": 1,
+        "project_name": "hiking",
+        "project_active": 1,
+        "proj_val_align": 0
+    }
+]
+```
+
+---
+
+#### PUT `api/projects/:id`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: projects id (PK of projects table)
+**Body**:
+user_id: integer (FK in projects table for PK of users table)
+updates: object with property project_name and/or property proj_val_align
+project_name: string, up to 64 characters
+proj_val_align: integer, 1 - 10
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 11
+Body:
+{
+    user_id: 1,
+    updates: {
+        project_name: 'skydiving',
+        proj_val_align: 7
+    }
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other project objects>
+    {
+        "id": 11,
+        "user_id": 1,
+        "project_name": "skydiving",
+        "project_active": 1,
+        "proj_val_align": 7
+    }
+]
+```
+
+---
+
+#### PUT `api/projects/:id/inactive`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: projects id (PK of projects table)
+**Body**:
+user_id: integer (FK in projects table for PK of users table)
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 11
+Body:
+{
+    user_id: 1
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other project objects>
+    {
+        "id": 11,
+        "user_id": 1,
+        "project_name": "skydiving",
+        "project_active": 0,
+        "proj_val_align": 0
+    }
+]
+```
+
+---
+
+#### PUT `api/projects/:id/active`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: projects id (PK of projects table)
+**Body**:
+user_id: integer (FK in projects table for PK of users table)
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 11
+Body:
+{
+    user_id: 1
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other project objects>
+    {
+        "id": 11,
+        "user_id": 1,
+        "project_name": "skydiving",
+        "project_active": 1,
+        "proj_val_align": 0
+    }
+]
+```
+
+---
+
+#### DELETE `api/projects/:id`
+
+##### Required (unless marked optional):
+
+**Header**: JWT token
+**URL Params**: project id (PK of projects table)
+**Body**:
+user_id: integer (FK in projects table for PK of users table)
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 11
+Body:
+{
+    user_id: 1
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other project objects>
+    {
+        "id": 3,
+        "user_id": 1,
+        "project_name": "working",
+        "project_active": 1,
+        "proj_val_align": 0
+    },
+    {
+        "id": 4,
+        "user_id": 1,
+        "project_name": "tidying my house",
+        "project_active": 1,
+        "proj_val_align": 4
+    }
+    <deleted project not included>
+]
+```
+
+---
 
 # api/uservalues <a name="userValuesEndpoints"></a>
 
