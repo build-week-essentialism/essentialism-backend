@@ -30,9 +30,61 @@ describe('Auth Routers', () => {
     await db('users').truncate();
   });
 
+  // LOGIN
   describe('LOGIN', () => {
     it('should return a 200 status code when passed a valid username & password', async () => {
 
+    })
+
+    it('returns a full user-object with a hashed password', () => {
+      
+    })
+
+    it('returns 404 if either username or password are missing', () => {
+      
+    })
+
+    it('returns a 404 if password is incorrect', () => {
+      
+    })
+  })
+
+  // REGISTER
+  describe('REGISTER', () => {
+    it('returns 201 if passed username and password in body', () => {
+      
+    })
+
+    it('returns 404 if missing either username or password', () => {
+      
+    })
+  })
+
+  // GET BY ID
+  describe('GET BY ID', () => {
+    it('returns a 200 with user object', () => {
+      
+    })
+  })
+
+  // PUT
+  describe('PUT', () => {
+    it('returns 200 with newly-made user object', () => {
+      
+    })
+
+    it('returns 404 if not passing in any body', () => {
+      
+    })
+  })
+
+  describe('DELETE', () => {
+    it('returns 200 if successful', () => {
+      
+    })
+
+    it("returns a 404 if passed an id that doesn't correspond to a user_id", () => {
+      
     })
   })
 })
@@ -40,8 +92,32 @@ describe('Auth Routers', () => {
 
 // CREATED-VALUES TESTS
 describe('Created-Values Routers', () => {
-  it('test description', () => {
-    
+  describe('GET', () => {
+    it('returns a 200 with an array of objects', () => {
+      
+    })
+  })
+
+  describe('POST', () => {
+    it('returns a 201 with newly-created value object', () => {
+      
+    })
+
+    it('returns a 404 if either created_value_name or user_id are missing', () => {
+      
+    })
+  })
+
+  describe('PUT', () => {
+    it('test description', () => {
+      
+    })
+  })
+
+  describe('DELETE', () => {
+    it('test description', () => {
+      
+    })
   })
 })
 
@@ -90,7 +166,8 @@ describe('Projects Routers', () => {
     await db('users').truncate();
   });
 
-  describe('Get by ID', () => {
+  // GET
+  describe('GET method', () => {
     it('returns an array of project-objects for a given id', async () => {
       let id = 1
       let response = await request(server).get(`/api/projects/${id}`)
@@ -99,6 +176,8 @@ describe('Projects Routers', () => {
       // expect(response.body).toEqual(responseArr)
     })
   })
+
+  // POST
   describe('POST method', () => {
     // ---> TRIED A SOLUTION FROM STACK OVERFLOW. NO SAUCE
     // it('Successfully returns list of projects with a 200', async (done) => {
@@ -127,6 +206,7 @@ describe('Projects Routers', () => {
       });
   })
 
+  // PUT
   describe('PUT PROJECT', () => {
     describe('Change values', () => {
       it('Returns 200', () => {
@@ -143,20 +223,27 @@ describe('Projects Routers', () => {
     })
   })
 
+  // PUT INACTIVE
   describe('MARK INACTIVE', () => {
     it('returns 200 with project set to inactive', () => {
       
     })
   })
 
+  // PUT ACTIVE
   describe('MARK ACTIVE', () => {
     it('returns 200 with project set to active', () => {
       
     })
   })
 
+  // DELETE
   describe('DELETE Project', () => {
-    it('returns 200 ', () => {
+    it('returns 200 when passed :id as params and user_id in body', () => {
+      
+    })
+
+    it('returns 404 if user_id is missing in body', () => {
       
     })
   })
