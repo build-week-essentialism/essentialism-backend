@@ -122,7 +122,7 @@ router.put('/:id', (req, res) => {
     !updates.password &&
     !updates.email &&
     !updates.firstName &&
-    !updates.firstName
+    !updates.lastName
   ) {
     res.status(404).json({
       message: `Hey, I don't know what to do with the data you provided! Make sure the data is already found in the user model!`
