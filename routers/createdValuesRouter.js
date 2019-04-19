@@ -67,17 +67,24 @@ router.post('/', (req, res) => {
 
 // router.put('/:id', restricted, (req, res) => {
 router.put('/:id', (req, res) => {
-  // The following excludes id and user_id from update:
-  let { id, user_id, ...update } = req.body.update;
-  id = req.params.id;
-  user_id = req.body.user_id;
-  if (!update.created_value_name) {
-    res.status(404).json({
-      message: "Be sure to pass 'created_value_name' if you want to change it."
-    });
+  const { id } = req.params;
+  const user_id = req.body.user_id
+  const update = req.body;
+  const updateHolder = {}
+  if (!updated.created_value_name) {
+    updateHolder = { user_id }
+  }
+  if (!update.created_value_name && !update.user_id) {
+    res
+      .status(404)
+      .json({
+        message:
+          "Be sure to pass either 'created_value_name' or 'user_id' if you want to change 'em"
+      });
   } else {
+    updateHolder = {user_id, created_value_name: update.created_value_name}
     createdValues
-      .updateCreatedValue(user_id, id, update)
+      .updateCreatedValue(user_id, id, updateHolder)
       .then(data => {
         if (!data) {
           res

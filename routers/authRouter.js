@@ -64,10 +64,11 @@ router.post('/login', (req, res) => {
         }
       })
       .catch(() => {
-        res.status(500);
-      });
-  }
-});
+        res.status(500).json({ message: "Something's gone wrong!"})
+      })
+    }
+})
+
 
 // REGISTERS A NEW USER. RETURNS NEWLY-MADE USER OBJECT
 // -> IF PROPERTIES GET PASSED VIA BODY THAT DO NOT CORRESPOND TO THE USER TABLE IN THE DATABASE, RETURNS A 500 ERROR
@@ -113,17 +114,10 @@ router.get('/', (req, res) => {
 // :id REFERS TO (user) ID
 // router.put('/:id', restricted,(req, res) => {
 router.put('/:id', (req, res) => {
-  // The following syntax excludes id and timestamp from updates:
-  const { id, timestamp, ...updates } = req.body;
-  const user_id = req.params.id;
-  // CHECK IF THE INFO PROVIDED IN THE BODY CORRESPONDS TO VALUE IN THE USER-TABLE
-  if (
-    !updates.username &&
-    !updates.password &&
-    !updates.email &&
-    !updates.firstName &&
-    !updates.firstName
-  ) {
+  const {id} = req.params
+  const updates = req.body;
+  // CHECK IF THE INFO PROVIDED IN THE BODY CORRESPONDS TO VALUE IN THE USER-TALBE
+  if (!updates.username && !updates.password && !updates.email && !updates.firstName && !updates.lastName) {
     res.status(404).json({
       message: `Hey, I don't know what to do with the data you provided! Make sure the data is already found in the user model!`
     });
