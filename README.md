@@ -413,7 +413,7 @@ Body: none
         "id": 2,
         "default_value_name": "Art and literature"
     },
-    <more default value objects>
+    <other default value objects>
 ]
 ```
 
@@ -665,7 +665,178 @@ Body:
 
 ---
 
-# api/uservalues <a name="userValuesEndpoints"></a>
+# api/uservalues <a name="uservaluesEndpoints"></a>
+
+---
+
+#### GET `api/uservalues/:id`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: user_id: integer (FK in uservalues table for PK of users table)
+**Body**: none
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 1
+Body: none
+```
+
+##### Example Response:
+
+```
+[
+    {
+        "id": 1,
+        "created_value_name": null,
+        "default_value_name": "Athletic ability",
+        "value_rank": 1,
+        "value_importance": "I love sports."
+    },
+    {
+        "id": 2,
+        "created_value_name": "emotional expression",
+        "default_value_name": null,
+        "value_rank": 2,
+        "value_importance": "You gotta let it out."
+    },
+    <other uservalue objects>
+]
+```
+
+---
+
+#### POST `api/uservalues`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: none
+**Body**:
+user_id: integer (FK in uservalues table for PK of users table)
+EITHER:
+default_value_id: integer (FK in uservalues table for PK of default-values table)
+OR:
+created_value_id: integer (FK in uservalues table for PK of created-values table)
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: none
+Body:
+{
+	"user_id": 1,
+	"default_value_id": 10
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other user value objects>
+    {
+        "id": 16,
+        "created_value_name": null,
+        "default_value_name": "My moral principles",
+        "value_rank": null,
+        "value_importance": null
+    }
+]
+```
+
+---
+
+#### PUT `api/uservalues/:user_id`
+
+##### Required (unless marked optional):
+
+**Header**: JSON web token
+**URL Params**: user_id: integer (FK in uservalues table for PK of users table)
+**Body**:
+id: integer (PK of user-values table)
+Either or both of the following:
+value_rank: integer (1, 2, or 3)
+value_importance: string, up to 256 characters
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 1
+Body:
+{
+	"id": 16,
+	"value_importance": "I love it",
+	"value_rank": 1
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other uservalue objects>
+    {
+        "id": 16,
+        "created_value_name": null,
+        "default_value_name": "My moral principles",
+        "value_rank": 1,
+        "value_importance": "I love it"
+    }
+]
+```
+
+---
+
+#### DELETE `api/uservalues/:user_id`
+
+##### Required (unless marked optional):
+
+**Header**: JWT token
+**URL Params**: user_id: integer (FK in uservalues table for PK of users table)
+**Body**:
+id: integer (PK in uservalues table)
+
+##### Example Request:
+
+```
+Header: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+URL Params: 1
+Body:
+{
+    id: 16
+}
+```
+
+##### Example Response:
+
+```
+[
+    <other uservalue objects>
+    {
+        "id": 2,
+        "created_value_name": "emotional expression",
+        "default_value_name": null,
+        "value_rank": 2,
+        "value_importance": "You gotta let it out."
+    },
+    {
+        "id": 3,
+        "created_value_name": "staying in touch with nature",
+        "default_value_name": null,
+        "value_rank": null,
+        "value_importance": "I used to go hiking with my dad. Getting out in nature reminds me of him."
+    },
+    <deleted user value object not included>
+]
+```
+
+---
 
 # Table Schema <a name="tableSchema"></a>
 
